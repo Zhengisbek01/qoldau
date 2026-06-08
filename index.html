@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+  <meta name="theme-color" content="#0D2346"/>
+  <title>QOLDAU | ADAL JASA GROUP</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0D2346;font-family:Georgia,serif}
+    #root{min-height:100vh}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+const C = {
+  navy: "#0D2346", navy2: "#14325D", gold: "#C79A3B", gold2: "#D8B46A",
+  silver: "#C9CED6", graphite: "#1F2430", white: "#FFFFFF", bg: "#F8FAFC",
+  red: "#E53E3E", green: "#38A169", orange: "#DD6B20",
+};
+
+const S = {
+  app: { fontFamily: "Georgia, serif", background: C.bg, minHeight: "100vh", maxWidth: 480, margin: "0 auto" },
+  header: { background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 100%)`, padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" },
+  headerTitle: { color: C.gold, fontSize: 20, fontWeight: "bold", letterSpacing: 2 },
+  headerSub: { color: C.silver, fontSize: 10, letterSpacing: 3 },
+  card: { background: C.white, borderRadius: 12, boxShadow: "0 2px 12px rgba(13,35,70,0.08)", padding: 16, marginBottom: 12 },
+  btnGold: { background: `linear-gradient(135deg, ${C.gold} 0%, ${C.gold2} 100%)`, color: C.white, border: "none", borderRadius: 8, padding: "12px 20px", fontSize: 14, fontWeight: "bold", cursor: "pointer", width: "100%", letterSpacing: 1 },
+  btnOutline: { background: "transparent", color: C.navy, border: `2px solid ${C.navy}`, borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: "bold", cursor: "pointer", width: "100%" },
+  label: { fontSize: 12, color: C.navy2, fontWeight: "bold", marginBottom: 4, display: "block", letterSpacing: 1 },
+  input: { width: "100%", border: `1px solid ${C.silver}`, borderRadius: 8, padding: "10px 12px", fontSize: 14, color: C.graphite, boxSizing: "border-box", fontFamily: "Georgia, serif" },
+  tag: (color) => ({ display: "inline-block", background: color + "20", color, border: `1px solid ${color}40`, borderRadius: 20, padding: "3px 10px", fontSize: 11, fontWeight: "bold" }),
+};
+
+const experts = [
+  { id: "e1", name: "Сапаров Канат Капанович", role: "Старший эксперт", spec: "Военное право, обращения и жалобы", detail: "Опыт прокуратуры и военного права; обращения в госорганы; дисциплинарные и административные вопросы", rating: 4.9, count: 47, avatar: "⚖️" },
+  { id: "e2", name: "Қапан Жеңісбек Қанатұлы", role: "Эксперт по трудовым вопросам", spec: "Трудовые и HR-вопросы", detail: "Увольнение, трудовой договор, ГПХ, зарплата, премия, дисциплинарные взыскания, больничный, отпуск", rating: 4.8, count: 63, avatar: "📋" },
+  { id: "e3", name: "Жанат Марат", role: "Эксперт по гражданским делам", spec: "Гражданские, семейные и имущественные вопросы", detail: "Долги, расписки, алименты, развод, раздел имущества, наследство, аренда, защита прав потребителей", rating: 4.9, count: 55, avatar: "🏛️" },
+];
+
+const services = [
+  { id: "s0", name: "AI-первичный разбор", price: 0, duration: "сразу", desc: "Автоматический анализ вашей ситуации" },
+  { id: "s1", name: "Краткая консультация", price: 5000, duration: "до 30 минут", desc: "Ответ на конкретный вопрос" },
+  { id: "s2", name: "Расширенная консультация", price: 10000, duration: "до 60 минут", desc: "Детальный разбор ситуации" },
+  { id: "s3", name: "Письменный ответ", price: 15000, duration: "до 24 часов", desc: "Письменное заключение эксперта" },
+  { id: "s4", name: "Проверка документа", price: 15000, duration: "до 24 часов", desc: "Юридическая экспертиза документа" },
+  { id: "s5", name: "Подготовка претензии / заявления", price: 20000, duration: "1–2 дня", desc: "Составление юридического документа" },
+  { id: "s6", name: "Срочная консультация", price: 15000, duration: "приоритетно", desc: "Срочный ответ эксперта" },
+];
+
+const categories = [
+  {
+    id: "labor", name: "Трудовые и HR-вопросы", icon: "👔", expertId: "e2",
+    problems: ["Меня хотят уволить", "Не продлевают трудовой договор", "Не выплатили зарплату", "Не выплатили премию", "Заставляют написать заявление", "Дали дисциплинарное взыскание", "Не дают отпуск", "Не принимают больничный", "Нужно написать объяснительную", "Проверить трудовой договор", "Вопрос по ГПХ"],
+    questions: ["У вас трудовой договор или договор ГПХ?", "Когда был заключён договор?", "Вам уже выдали уведомление, приказ или другой документ?", "Срок договора истекает или речь идёт о досрочном прекращении?", "Вы сейчас на больничном, в отпуске или в другой защищённой ситуации?", "Есть ли переписка с работодателем?", "Какой результат вы хотите получить?"],
+  },
+  {
+    id: "civil", name: "Гражданские и семейные дела", icon: "👨‍👩‍👧", expertId: "e3",
+    problems: ["Хочу развестись", "Нужны алименты", "Не платят алименты", "Раздел имущества", "Спор по ребёнку", "Не возвращают долг", "Долг по расписке", "Составить претензию", "Спор по договору", "Аренда", "Наследство", "Защита прав потребителей"],
+    questions: ["Ситуация связана с договором, распиской, семьёй или имуществом?", "Есть ли письменные документы?", "Какая примерная сумма спора?", "Когда возникла ситуация?", "Есть ли переписка или подтверждающие материалы?", "Вторая сторона признаёт проблему?", "Вам нужна консультация, письменный ответ или документ?"],
+  },
+  {
+    id: "military", name: "Военное право, обращения и жалобы", icon: "🎖️", expertId: "e1",
+    problems: ["Вопрос по военной службе", "Дисциплинарная ответственность", "Составить жалобу", "Обращение в госорган", "Обращение в прокуратуру", "Правовая оценка ситуации", "Проверка заявления", "Административный вопрос"],
+    questions: ["К какой сфере относится вопрос?", "Что произошло?", "Когда это произошло?", "Есть ли документы или переписка?", "Куда вы уже обращались?", "Какой результат хотите получить?", "Вам нужна консультация или подготовка текста жалобы?"],
+  },
+];
+
+const demoApps = [
+  { id: 1001, clientName: "Айдана", phone: "+7 701 111 2233", city: "Алматы", category: "Трудовые и HR-вопросы", problem: "Меня хотят уволить", description: "Работодатель устно предупредил об увольнении, документов не давал", desiredResult: "Защитить свои права", aiSummary: "Возможное незаконное увольнение. Необходимо получить письменное уведомление и проверить основания.", urgency: "высокая", requiredDocuments: ["Трудовой договор", "Приказы и уведомления"], expertId: "e2", expertName: "Қапан Жеңісбек Қанатұлы", serviceName: "Краткая консультация", price: 5000, status: "Ожидает оплаты", paymentStatus: "Ожидает оплаты", files: [], expertAnswer: "", review: null, createdAt: "03.06.2026, 09:15" },
+  { id: 1002, clientName: "Ерлан", phone: "+7 702 222 3344", city: "Астана", category: "Гражданские и семейные дела", problem: "Не возвращают долг", description: "Дал в долг 500 000 тенге под расписку, уже 8 месяцев не возвращают", desiredResult: "Вернуть деньги", aiSummary: "Гражданский спор по расписке. Срок исковой давности не истёк. Рекомендуется претензия и обращение в суд.", urgency: "средняя", requiredDocuments: ["Расписка", "Переписка с должником"], expertId: "e3", expertName: "Жанат Марат", serviceName: "Письменный ответ", price: 15000, status: "В работе", paymentStatus: "Оплачена", files: [], expertAnswer: "", review: null, createdAt: "02.06.2026, 14:30" },
+  { id: 1003, clientName: "Мадина", phone: "+7 703 333 4455", city: "Шымкент", category: "Военное право, обращения и жалобы", problem: "Составить жалобу", description: "Незаконные действия со стороны командира, нарушение устава", desiredResult: "Подать жалобу в прокуратуру", aiSummary: "Нарушение воинского устава и прав военнослужащего. Основания для обращения в военную прокуратуру имеются.", urgency: "высокая", requiredDocuments: ["Документы о службе", "Переписка"], expertId: "e1", expertName: "Сапаров Канат Капанович", serviceName: "Подготовка претензии / заявления", price: 20000, status: "Ответ готов", paymentStatus: "Оплачена", files: [], expertAnswer: "Уважаемая Мадина! На основании предоставленных сведений подготовлено обращение в военную прокуратуру. В жалобе изложены факты нарушения ст. 10 Устава внутренней службы. Рекомендую подать лично под роспись.", review: null, createdAt: "01.06.2026, 10:00" },
+];
+
+const statusColor = (s) => {
+  if (s === "Ответ готов" || s === "Завершена") return C.green;
+  if (s === "В работе" || s === "Передана эксперту" || s === "Оплачена") return C.navy;
+  if (s === "Ожидает оплаты" || s === "Новая") return C.orange;
+  if (s === "Отменена") return C.red;
+  return C.silver;
+};
+
+// ── Subcomponents (hooks allowed at top level of each) ──
+
+function AiChatScreen({ selectedCategory, selectedProblem, aiStep, setAiStep, aiAnswers, setAiAnswers, go, generateAiResult }) {
+  const [answer, setAnswer] = useState("");
+  const questions = selectedCategory?.questions || [];
+  const currentQ = questions[aiStep];
+  return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => go("problemSelect")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>AI-РАЗБОР</div><div style={S.headerSub}>{selectedProblem?.toUpperCase()}</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        <div style={{ background: `${C.navy}10`, borderRadius: 8, padding: "8px 12px", marginBottom: 16, fontSize: 12, color: C.navy2 }}>
+          Вопрос {aiStep + 1} из {questions.length}
+          <div style={{ height: 4, background: C.silver, borderRadius: 2, marginTop: 6 }}>
+            <div style={{ height: 4, background: C.gold, borderRadius: 2, width: `${((aiStep + 1) / questions.length) * 100}%`, transition: "width 0.3s" }} />
+          </div>
+        </div>
+        <div style={{ ...S.card, background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 100%)` }}>
+          <div style={{ color: C.gold, fontSize: 11, marginBottom: 6, letterSpacing: 1 }}>AI-ПОМОЩНИК</div>
+          <div style={{ color: C.white, fontSize: 15, lineHeight: 1.5 }}>{currentQ}</div>
+        </div>
+        {Object.entries(aiAnswers).map(([q, a]) => (
+          <div key={q} style={{ ...S.card, background: `${C.navy}08`, padding: "8px 12px" }}>
+            <div style={{ fontSize: 11, color: C.navy2 }}>{q}</div>
+            <div style={{ fontSize: 13, color: C.graphite, marginTop: 2 }}>{a}</div>
+          </div>
+        ))}
+        <div style={{ marginTop: 8 }}>
+          <textarea value={answer} onChange={e => setAnswer(e.target.value)} placeholder="Ваш ответ..." style={{ ...S.input, minHeight: 80, resize: "none" }} />
+          <button style={{ ...S.btnGold, marginTop: 8 }} onClick={() => {
+            const newAnswers = { ...aiAnswers, [currentQ]: answer || "—" };
+            setAiAnswers(newAnswers);
+            setAnswer("");
+            if (aiStep + 1 < questions.length) {
+              setAiStep(aiStep + 1);
+            } else {
+              generateAiResult(newAnswers);
+            }
+          }}>
+            {aiStep + 1 < questions.length ? "Следующий вопрос →" : "Получить AI-разбор →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExpertDashboard({ applications, setApplications, go, setRole }) {
+  const [activeExpertId, setActiveExpertId] = useState("e2");
+  const [answerTexts, setAnswerTexts] = useState({});
+  const me = experts.find(e => e.id === activeExpertId);
+  const myApps = applications.filter(a => a.expertId === activeExpertId);
+  return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => { go("roleSelect"); setRole(null); }} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>КАБИНЕТ</div><div style={S.headerSub}>ЭКСПЕРТ</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        <div style={{ ...S.card, background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 100%)` }}>
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <div style={{ fontSize: 32 }}>{me?.avatar}</div>
+            <div><div style={{ color: C.white, fontWeight: "bold", fontSize: 15 }}>{me?.name}</div><div style={{ color: C.gold2, fontSize: 12, marginTop: 2 }}>{me?.role}</div></div>
+          </div>
+          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+            {["e1","e2","e3"].map(eid => (
+              <button key={eid} onClick={() => setActiveExpertId(eid)}
+                style={{ background: eid === activeExpertId ? C.gold : "rgba(255,255,255,0.1)", color: C.white, border: "none", borderRadius: 6, padding: "4px 10px", fontSize: 11, cursor: "pointer" }}>
+                {experts.find(e => e.id === eid)?.name.split(" ")[0]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div style={{ fontSize: 13, fontWeight: "bold", color: C.navy, marginBottom: 8, letterSpacing: 1 }}>МОИ ЗАЯВКИ ({myApps.length})</div>
+        {myApps.length === 0 && <div style={{ textAlign: "center", color: "#999", padding: 20 }}>Заявок нет</div>}
+        {myApps.map(a => (
+          <div key={a.id} style={S.card}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{a.problem}</div>
+              <span style={S.tag(statusColor(a.status))}>{a.status}</span>
+            </div>
+            <div style={{ fontSize: 12, color: "#666" }}>{a.clientName} · {a.city} · {a.phone}</div>
+            <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>💳 {a.paymentStatus}</div>
+            {a.aiSummary && <div style={{ fontSize: 12, color: C.navy2, marginTop: 6, background: `${C.navy}08`, borderRadius: 6, padding: 8, lineHeight: 1.5 }}>AI: {a.aiSummary}</div>}
+            {!a.expertAnswer && a.paymentStatus === "Оплачена" && (
+              <div style={{ marginTop: 8 }}>
+                <textarea value={answerTexts[a.id] || ""} onChange={e => setAnswerTexts(prev => ({ ...prev, [a.id]: e.target.value }))} style={{ ...S.input, minHeight: 60, resize: "none" }} placeholder="Введите ответ клиенту..." />
+                <button style={{ ...S.btnGold, marginTop: 6 }} onClick={() => {
+                  const txt = answerTexts[a.id] || "Ответ отправлен экспертом.";
+                  setApplications(prev => prev.map(ap => ap.id === a.id ? { ...ap, expertAnswer: txt, status: "Ответ готов" } : ap));
+                  setAnswerTexts(prev => ({ ...prev, [a.id]: "" }));
+                }}>Отправить ответ</button>
+              </div>
+            )}
+            {a.expertAnswer && <div style={{ fontSize: 12, color: C.green, marginTop: 8 }}>✅ Ответ отправлен</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BottomNav({ screen, go }) {
+  const items = [
+    { icon: "🏠", label: "Главная", to: "clientHome" },
+    { icon: "📋", label: "Заявки", to: "clientApplications" },
+    { icon: "👨‍⚖️", label: "Эксперты", to: "expertSelect" },
+    { icon: "➕", label: "Подать", to: "problemSelect" },
+  ];
+  return (
+    <div style={{ position: "sticky", bottom: 0, background: C.white, borderTop: `1px solid ${C.silver}`, display: "flex", boxShadow: "0 -2px 12px rgba(0,0,0,0.08)" }}>
+      {items.map(i => (
+        <div key={i.to} onClick={() => go(i.to)} style={{ flex: 1, padding: "10px 0", textAlign: "center", cursor: "pointer" }}>
+          <div style={{ fontSize: 18 }}>{i.icon}</div>
+          <div style={{ fontSize: 10, color: screen === i.to ? C.gold : "#999", fontWeight: screen === i.to ? "bold" : "normal", marginTop: 2 }}>{i.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main App ──
+
+function App() {
+  const [role, setRole] = useState(null);
+  const [screen, setScreen] = useState("roleSelect");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedProblem, setSelectedProblem] = useState(null);
+  const [selectedExpert, setSelectedExpert] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
+  const [aiAnswers, setAiAnswers] = useState({});
+  const [aiStep, setAiStep] = useState(0);
+  const [aiResult, setAiResult] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [applications, setApplications] = useState(demoApps);
+  const [activeApp, setActiveApp] = useState(null);
+  const [form, setForm] = useState({ name: "", phone: "", city: "", description: "", desiredResult: "", agree: false });
+  const [reviewText, setReviewText] = useState("");
+  const [reviewStars, setReviewStars] = useState(5);
+
+  const go = (s) => setScreen(s);
+
+  const generateAiResult = async (answers) => {
+    const cat = selectedCategory;
+    const expert = experts.find(e => e.id === cat.expertId);
+    setAiLoading(true);
+    go("aiResult");
+    try {
+      const answersText = Object.entries(answers).map(([q, a]) => `Вопрос: ${q}\nОтвет: ${a}`).join("\n\n");
+      const prompt = `Ты — юридический AI-помощник сервиса Qoldau (Казахстан, законодательство РК).
+Клиент обратился с проблемой: «${selectedProblem}» (категория: ${cat.name}).
+Ответы клиента:
+${answersText}
+
+Верни ТОЛЬКО валидный JSON без markdown-обёртки:
+{"summary":"резюме ситуации 2-3 предложения на русском","urgency":"высокая"|"средняя"|"низкая","documents":["документ1","документ2","документ3"],"advice":"конкретные первые шаги","serviceRecommendation":"s1"|"s2"|"s3"|"s4"|"s5"|"s6"}
+
+s1=краткая консультация 5000₸, s2=расширенная 10000₸, s3=письменный ответ 15000₸, s4=проверка документа 15000₸, s5=претензия 20000₸, s6=срочная 15000₸.`;
+
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{ role: "user", content: prompt }] }),
+      });
+      const data = await response.json();
+      const text = (data.content || []).map(b => b.text || "").join("");
+      const clean = text.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(clean);
+      setAiResult({ category: cat.name, summary: parsed.summary, urgency: parsed.urgency || "средняя", documents: parsed.documents || [], advice: parsed.advice || "", expert, service: services.find(s => s.id === parsed.serviceRecommendation) || services[1] });
+    } catch {
+      const fallbackDocs = { labor: ["Трудовой договор", "Приказы и уведомления", "Расчётные листки"], civil: ["Расписка / договор", "Переписка со второй стороной", "Платёжные документы"], military: ["Документы о прохождении службы", "Ранее поданные обращения", "Приказы командира"] };
+      setAiResult({ category: cat.name, summary: `По вашим ответам ситуация классифицирована как «${selectedProblem}». Рекомендуется юридическая консультация для защиты ваших прав.`, urgency: "средняя", documents: fallbackDocs[cat.id] || [], advice: "", expert, service: services[1] });
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const submitApplication = () => {
+    const newApp = {
+      id: Date.now(), clientName: form.name || "Клиент", phone: form.phone, city: form.city,
+      category: selectedCategory?.name, problem: selectedProblem, description: form.description,
+      desiredResult: form.desiredResult, aiSummary: aiResult?.summary || "", urgency: aiResult?.urgency || "средняя",
+      requiredDocuments: aiResult?.documents || [], expertId: selectedExpert?.id, expertName: selectedExpert?.name,
+      serviceName: selectedService?.name, price: selectedService?.price || 0,
+      status: selectedService?.price === 0 ? "AI-разбор завершён" : "Ожидает оплаты",
+      paymentStatus: selectedService?.price === 0 ? "Бесплатно" : "Ожидает оплаты",
+      files: [], expertAnswer: "", review: null, createdAt: new Date().toLocaleString("ru-RU"),
+    };
+    setApplications(prev => [newApp, ...prev]);
+    setActiveApp(newApp);
+    go("payment");
+  };
+
+  const payApp = (id) => {
+    setApplications(prev => prev.map(a => a.id === id ? { ...a, status: "Оплачена", paymentStatus: "Оплачена" } : a));
+    setActiveApp(prev => prev ? { ...prev, status: "Оплачена", paymentStatus: "Оплачена" } : prev);
+  };
+
+  // ── ROLE SELECT ──
+  if (screen === "roleSelect") return (
+    <div style={S.app}>
+      <div style={{ background: `linear-gradient(160deg, ${C.navy} 0%, ${C.navy2} 60%, ${C.gold}30 100%)`, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
+        <div style={{ textAlign: "center", marginBottom: 40 }}>
+          <div style={{ fontSize: 48, marginBottom: 8 }}>⚖️</div>
+          <div style={{ color: C.gold, fontSize: 32, fontWeight: "bold", letterSpacing: 4 }}>QOLDAU</div>
+          <div style={{ color: C.silver, fontSize: 11, letterSpacing: 3, marginTop: 4 }}>by ADAL JASA GROUP</div>
+          <div style={{ color: C.gold2, fontSize: 13, marginTop: 12, fontStyle: "italic" }}>«Правовая помощь рядом»</div>
+        </div>
+        <div style={{ width: "100%", maxWidth: 340 }}>
+          {[{ r: "client", label: "👤  Я — Клиент", sub: "Получить юридическую помощь", to: "clientHome" }, { r: "expert", label: "👨‍⚖️  Я — Эксперт", sub: "Обработать заявки клиентов", to: "expertDashboard" }, { r: "admin", label: "🔧  Администратор", sub: "Управление системой", to: "adminDashboard" }].map(item => (
+            <div key={item.r} onClick={() => { setRole(item.r); go(item.to); }}
+              style={{ background: "rgba(255,255,255,0.08)", border: `1px solid ${C.gold}40`, borderRadius: 12, padding: "16px 20px", marginBottom: 12, cursor: "pointer" }}>
+              <div style={{ color: C.white, fontSize: 15, fontWeight: "bold" }}>{item.label}</div>
+              <div style={{ color: C.silver, fontSize: 12, marginTop: 4 }}>{item.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── CLIENT HOME ──
+  if (screen === "clientHome") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <div><div style={S.headerTitle}>QOLDAU</div><div style={S.headerSub}>ADAL JASA GROUP</div></div>
+        <div style={{ color: C.gold, fontSize: 22 }}>⚖️</div>
+      </div>
+      <div style={{ background: `linear-gradient(135deg, ${C.navy} 0%, ${C.navy2} 100%)`, padding: "20px 16px 28px" }}>
+        <div style={{ color: C.gold2, fontSize: 13, fontStyle: "italic", marginBottom: 8 }}>«Правовая помощь рядом»</div>
+        <div style={{ color: C.white, fontSize: 18, fontWeight: "bold", lineHeight: 1.4 }}>Опишите вашу проблему — эксперт поможет</div>
+        <button style={{ ...S.btnGold, marginTop: 16, maxWidth: 200 }} onClick={() => go("problemSelect")}>Получить помощь →</button>
+      </div>
+      <div style={{ padding: "16px 16px 0" }}>
+        <div style={{ fontSize: 13, fontWeight: "bold", color: C.navy, marginBottom: 12, letterSpacing: 1 }}>КАК ЭТО РАБОТАЕТ</div>
+        {[["1. Выберите проблему", "Из понятных жизненных ситуаций"], ["2. AI-разбор", "Первичный анализ за секунды"], ["3. Эксперт отвечает", "Юрист изучает и даёт ответ"]].map(([t, s]) => (
+          <div key={t} style={{ ...S.card, display: "flex", gap: 12, alignItems: "flex-start" }}>
+            <div style={{ color: C.gold, fontSize: 20, minWidth: 24 }}>●</div>
+            <div><div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{t}</div><div style={{ color: "#666", fontSize: 12, marginTop: 2 }}>{s}</div></div>
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: "0 16px 80px" }}>
+        <div style={{ fontSize: 13, fontWeight: "bold", color: C.navy, marginBottom: 12, letterSpacing: 1 }}>ПОПУЛЯРНЫЕ УСЛУГИ</div>
+        {services.slice(1, 4).map(s => (
+          <div key={s.id} style={{ ...S.card, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div><div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{s.name}</div><div style={{ color: "#666", fontSize: 12 }}>{s.duration}</div></div>
+            <div style={{ color: C.gold, fontWeight: "bold", fontSize: 15 }}>{s.price.toLocaleString()} ₸</div>
+          </div>
+        ))}
+      </div>
+      <BottomNav screen={screen} go={go} />
+    </div>
+  );
+
+  // ── PROBLEM SELECT ──
+  if (screen === "problemSelect") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => go("clientHome")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>ПРОБЛЕМА</div><div style={S.headerSub}>ВЫБЕРИТЕ ВАШУ СИТУАЦИЮ</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        {categories.map(cat => (
+          <div key={cat.id}>
+            <div style={{ fontSize: 13, fontWeight: "bold", color: C.navy2, marginBottom: 8, marginTop: 8, letterSpacing: 1 }}>{cat.icon} {cat.name.toUpperCase()}</div>
+            {cat.problems.map(p => (
+              <div key={p} onClick={() => { setSelectedCategory(cat); setSelectedProblem(p); setAiStep(0); setAiAnswers({}); go("aiChat"); }}
+                style={{ ...S.card, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px" }}>
+                <span style={{ color: C.graphite, fontSize: 14 }}>{p}</span>
+                <span style={{ color: C.gold }}>›</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ── AI CHAT (delegated to subcomponent) ──
+  if (screen === "aiChat") return (
+    <AiChatScreen
+      selectedCategory={selectedCategory}
+      selectedProblem={selectedProblem}
+      aiStep={aiStep}
+      setAiStep={setAiStep}
+      aiAnswers={aiAnswers}
+      setAiAnswers={setAiAnswers}
+      go={go}
+      generateAiResult={generateAiResult}
+    />
+  );
+
+  // ── AI RESULT ──
+  if (screen === "aiResult") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => { if (!aiLoading) go("aiChat"); }} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>AI-РЕЗУЛЬТАТ</div><div style={S.headerSub}>ПЕРВИЧНЫЙ РАЗБОР</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        {aiLoading ? (
+          <div style={{ ...S.card, textAlign: "center", padding: 40 }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>🤖</div>
+            <div style={{ color: C.navy, fontWeight: "bold", fontSize: 16, marginBottom: 8 }}>AI анализирует вашу ситуацию...</div>
+            <div style={{ color: "#666", fontSize: 13 }}>Это займёт несколько секунд</div>
+            <div style={{ marginTop: 20, display: "flex", justifyContent: "center", gap: 8 }}>
+              {[0, 1, 2].map(i => (
+                <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: C.gold, opacity: 0.7 + i * 0.1, transform: `scale(${1 + i * 0.1})` }} />
+              ))}
+            </div>
+          </div>
+        ) : aiResult ? (
+          <>
+            <div style={{ ...S.card, border: `2px solid ${C.gold}` }}>
+              <div style={{ color: C.gold, fontSize: 11, letterSpacing: 1, marginBottom: 8 }}>РЕЗУЛЬТАТ AI-АНАЛИЗА</div>
+              <div style={{ marginBottom: 8 }}>
+                <span style={S.tag(C.navy2)}>{aiResult.category}</span>{" "}
+                <span style={S.tag(aiResult.urgency === "высокая" ? C.red : aiResult.urgency === "средняя" ? C.orange : C.green)}>Срочность: {aiResult.urgency}</span>
+              </div>
+              <div style={{ fontSize: 14, color: C.graphite, lineHeight: 1.6 }}>{aiResult.summary}</div>
+            </div>
+            {aiResult.advice ? (
+              <div style={{ ...S.card, background: `${C.gold}10`, border: `1px solid ${C.gold}40` }}>
+                <div style={{ color: C.gold, fontSize: 11, letterSpacing: 1, marginBottom: 8 }}>💡 ПЕРВЫЕ ШАГИ</div>
+                <div style={{ fontSize: 13, color: C.graphite, lineHeight: 1.6 }}>{aiResult.advice}</div>
+              </div>
+            ) : null}
+            {aiResult.documents?.length > 0 && (
+              <div style={S.card}>
+                <div style={{ color: C.navy, fontSize: 12, fontWeight: "bold", marginBottom: 8, letterSpacing: 1 }}>📄 ДОКУМЕНТЫ ДЛЯ ПОДГОТОВКИ</div>
+                {aiResult.documents.map(d => <div key={d} style={{ fontSize: 13, color: C.graphite, padding: "4px 0", borderBottom: `1px solid ${C.bg}` }}>• {d}</div>)}
+              </div>
+            )}
+            <div style={S.card}>
+              <div style={{ color: C.navy, fontSize: 12, fontWeight: "bold", marginBottom: 8, letterSpacing: 1 }}>👨‍⚖️ РЕКОМЕНДУЕМЫЙ ЭКСПЕРТ</div>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <div style={{ fontSize: 28 }}>{aiResult.expert.avatar}</div>
+                <div>
+                  <div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{aiResult.expert.name}</div>
+                  <div style={{ fontSize: 12, color: "#666" }}>{aiResult.expert.spec}</div>
+                  <div style={{ color: C.gold, fontSize: 12, marginTop: 2 }}>★ {aiResult.expert.rating}</div>
+                </div>
+              </div>
+            </div>
+            {aiResult.service && (
+              <div style={{ ...S.card, background: `${C.navy}06` }}>
+                <div style={{ color: C.navy, fontSize: 12, fontWeight: "bold", marginBottom: 4, letterSpacing: 1 }}>📋 РЕКОМЕНДУЕМАЯ УСЛУГА</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ fontSize: 14, color: C.graphite }}>{aiResult.service.name}</div>
+                  <div style={{ color: C.gold, fontWeight: "bold" }}>{aiResult.service.price === 0 ? "Бесплатно" : aiResult.service.price.toLocaleString() + " ₸"}</div>
+                </div>
+              </div>
+            )}
+            <button style={S.btnGold} onClick={() => { setSelectedExpert(aiResult.expert); setSelectedService(aiResult.service); go("expertSelect"); }}>Выбрать эксперта →</button>
+            <button style={{ ...S.btnOutline, marginTop: 8 }} onClick={() => go("expertSelect")}>Посмотреть всех экспертов</button>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  // ── EXPERT SELECT ──
+  if (screen === "expertSelect") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => go("aiResult")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>ЭКСПЕРТЫ</div><div style={S.headerSub}>ADAL JASA GROUP</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        {experts.map(e => (
+          <div key={e.id} onClick={() => { setSelectedExpert(e); go("serviceSelect"); }}
+            style={{ ...S.card, cursor: "pointer", border: selectedExpert?.id === e.id ? `2px solid ${C.gold}` : `1px solid ${C.silver}30` }}>
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <div style={{ fontSize: 32, background: `${C.navy}10`, borderRadius: 8, padding: "8px 12px" }}>{e.avatar}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: "bold", color: C.navy, fontSize: 15 }}>{e.name}</div>
+                <div style={{ fontSize: 12, color: C.navy2, marginTop: 2 }}>{e.role}</div>
+                <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
+                  <span style={S.tag(C.gold)}>★ {e.rating}</span>
+                  <span style={S.tag(C.navy2)}>{e.count} дел</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: 12, color: "#666", marginTop: 10, lineHeight: 1.5 }}>{e.detail}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // ── SERVICE SELECT ──
+  if (screen === "serviceSelect") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => go("expertSelect")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>УСЛУГИ</div><div style={S.headerSub}>{selectedExpert?.name?.toUpperCase()}</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        {services.map(s => (
+          <div key={s.id} onClick={() => setSelectedService(s)}
+            style={{ ...S.card, cursor: "pointer", border: selectedService?.id === s.id ? `2px solid ${C.gold}` : `1px solid ${C.silver}30` }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div>
+                <div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{s.name}</div>
+                <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{s.desc}</div>
+                <div style={{ fontSize: 11, color: C.navy2, marginTop: 4 }}>⏱ {s.duration}</div>
+              </div>
+              <div style={{ color: C.gold, fontWeight: "bold", fontSize: 16, minWidth: 80, textAlign: "right" }}>{s.price === 0 ? "Бесплатно" : s.price.toLocaleString() + " ₸"}</div>
+            </div>
+          </div>
+        ))}
+        <button style={{ ...S.btnGold, opacity: selectedService ? 1 : 0.5 }} disabled={!selectedService} onClick={() => go("applicationForm")}>Продолжить →</button>
+      </div>
+    </div>
+  );
+
+  // ── APPLICATION FORM ──
+  if (screen === "applicationForm") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => go("serviceSelect")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>ЗАЯВКА</div><div style={S.headerSub}>ЗАПОЛНИТЕ ФОРМУ</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16 }}>
+        <div style={S.card}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+            <div><div style={{ fontSize: 12, color: "#666" }}>Эксперт</div><div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{selectedExpert?.name}</div></div>
+            <div style={{ textAlign: "right" }}><div style={{ fontSize: 12, color: "#666" }}>Услуга</div><div style={{ fontWeight: "bold", color: C.gold, fontSize: 14 }}>{selectedService?.price === 0 ? "Бесплатно" : selectedService?.price?.toLocaleString() + " ₸"}</div></div>
+          </div>
+          <div style={{ fontSize: 13, color: C.navy2 }}>{selectedService?.name}</div>
+        </div>
+        {[["Ваше имя *", "name", "text"], ["Телефон *", "phone", "tel"], ["Город", "city", "text"]].map(([lbl, field, type]) => (
+          <div key={field} style={{ marginBottom: 12 }}>
+            <label style={S.label}>{lbl}</label>
+            <input type={type} value={form[field]} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))} style={S.input} placeholder={lbl.replace(" *", "")} />
+          </div>
+        ))}
+        <div style={{ marginBottom: 12 }}>
+          <label style={S.label}>Описание ситуации *</label>
+          <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} style={{ ...S.input, minHeight: 80, resize: "none" }} placeholder="Кратко опишите вашу ситуацию..." />
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <label style={S.label}>Желаемый результат</label>
+          <input value={form.desiredResult} onChange={e => setForm(f => ({ ...f, desiredResult: e.target.value }))} style={S.input} placeholder="Чего вы хотите достичь?" />
+        </div>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 16 }}>
+          <input type="checkbox" checked={form.agree} onChange={e => setForm(f => ({ ...f, agree: e.target.checked }))} style={{ marginTop: 3 }} />
+          <div style={{ fontSize: 11, color: "#666", lineHeight: 1.5 }}>Я согласен(а) с условиями. AI-помощник предоставляет предварительный информационный разбор и не заменяет консультацию квалифицированного специалиста.</div>
+        </div>
+        <button style={{ ...S.btnGold, opacity: (form.name && form.phone && form.agree) ? 1 : 0.5 }} disabled={!form.name || !form.phone || !form.agree} onClick={submitApplication}>
+          Отправить заявку →
+        </button>
+      </div>
+    </div>
+  );
+
+  // ── PAYMENT ──
+  if (screen === "payment" && activeApp) {
+    const kaspiUrl = `https://kaspi.kz/pay/ADALJASAGROUP`;
+    return (
+      <div style={S.app}>
+        <div style={S.header}>
+          <div style={{ width: 24 }} />
+          <div style={{ textAlign: "center" }}><div style={S.headerTitle}>ОПЛАТА</div><div style={S.headerSub}>KASPI PAY</div></div>
+          <div style={{ width: 24 }} />
+        </div>
+        <div style={{ padding: 16 }}>
+          {activeApp.price === 0 ? (
+            <div style={{ ...S.card, textAlign: "center" }}>
+              <div style={{ fontSize: 48 }}>✅</div>
+              <div style={{ fontSize: 18, fontWeight: "bold", color: C.navy, marginTop: 8 }}>Заявка принята!</div>
+              <div style={{ fontSize: 13, color: "#666", marginTop: 8 }}>AI-разбор бесплатен. Ваша заявка передана.</div>
+              <button style={{ ...S.btnGold, marginTop: 16 }} onClick={() => go("clientApplications")}>Мои заявки →</button>
+            </div>
+          ) : (
+            <>
+              {/* Детали */}
+              <div style={{ ...S.card, border: `2px solid ${C.gold}` }}>
+                <div style={{ color: C.gold, fontSize: 11, letterSpacing: 1, marginBottom: 10 }}>ДЕТАЛИ ОПЛАТЫ</div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ color: "#666", fontSize: 13 }}>Услуга</span><span style={{ fontWeight: "bold", color: C.navy, fontSize: 13 }}>{activeApp.serviceName}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ color: "#666", fontSize: 13 }}>Эксперт</span><span style={{ fontWeight: "bold", color: C.navy, fontSize: 13 }}>{activeApp.expertName}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}><span style={{ color: "#666", fontSize: 13 }}>Заявка</span><span style={{ fontWeight: "bold", color: C.navy, fontSize: 13 }}>#{String(activeApp.id).slice(-4)}</span></div>
+                <div style={{ height: 1, background: C.silver, margin: "8px 0" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontWeight: "bold", color: C.navy }}>К оплате</span>
+                  <span style={{ fontWeight: "bold", color: C.gold, fontSize: 24 }}>{activeApp.price.toLocaleString()} ₸</span>
+                </div>
+              </div>
+
+              {/* Kaspi Pay кнопка */}
+              <div style={{ ...S.card, background: "#F14635", border: "none", padding: 0, overflow: "hidden" }}>
+                <a
+                  href={kaspiUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, padding: "18px 20px", textDecoration: "none" }}
+                >
+                  <div style={{ background: "white", borderRadius: 8, padding: "4px 8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ color: "#F14635", fontWeight: "900", fontSize: 16, letterSpacing: 1 }}>Kaspi</span>
+                  </div>
+                  <div>
+                    <div style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>Оплатить через Kaspi Pay</div>
+                    <div style={{ color: "rgba(255,255,255,0.8)", fontSize: 11, marginTop: 2 }}>kaspi.kz/pay/ADALJASAGROUP</div>
+                  </div>
+                  <div style={{ color: "white", fontSize: 20, marginLeft: "auto" }}>→</div>
+                </a>
+              </div>
+
+              {/* Инструкция */}
+              <div style={{ ...S.card, background: `${C.navy}06` }}>
+                <div style={{ color: C.navy, fontSize: 12, fontWeight: "bold", marginBottom: 10, letterSpacing: 1 }}>КАК ОПЛАТИТЬ</div>
+                {[
+                  ["1", "Нажмите кнопку «Оплатить через Kaspi Pay»"],
+                  ["2", `Введите сумму: ${activeApp.price.toLocaleString()} ₸`],
+                  ["3", `В комментарии укажите номер заявки: #${String(activeApp.id).slice(-4)}`],
+                  ["4", "Вернитесь и нажмите «Я оплатил»"],
+                ].map(([n, t]) => (
+                  <div key={n} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+                    <div style={{ minWidth: 22, height: 22, borderRadius: "50%", background: C.gold, color: C.white, fontSize: 11, fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center" }}>{n}</div>
+                    <div style={{ fontSize: 13, color: C.graphite, lineHeight: 1.4 }}>{t}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Скопировать ссылку */}
+              <div style={{ ...S.card, display: "flex", alignItems: "center", gap: 10, padding: "12px 16px" }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, color: "#999", marginBottom: 2 }}>Ссылка на оплату</div>
+                  <div style={{ fontSize: 12, color: C.navy2, fontWeight: "bold" }}>{kaspiUrl}</div>
+                </div>
+                <button onClick={() => { navigator.clipboard?.writeText(kaspiUrl); }}
+                  style={{ background: C.navy, color: C.white, border: "none", borderRadius: 6, padding: "8px 12px", fontSize: 11, cursor: "pointer", whiteSpace: "nowrap" }}>
+                  📋 Копировать
+                </button>
+              </div>
+
+              <button style={S.btnGold} onClick={() => { payApp(activeApp.id); go("clientApplications"); }}>✅ Я оплатил</button>
+              <button style={{ ...S.btnOutline, marginTop: 8 }} onClick={() => go("clientApplications")}>Назад</button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── CLIENT APPLICATIONS ──
+  if (screen === "clientApplications") return (
+    <div style={S.app}>
+      <div style={S.header}>
+        <button onClick={() => go("clientHome")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+        <div style={{ textAlign: "center" }}><div style={S.headerTitle}>МОИ ЗАЯВКИ</div><div style={S.headerSub}>ИСТОРИЯ</div></div>
+        <div style={{ width: 24 }} />
+      </div>
+      <div style={{ padding: 16, paddingBottom: 80 }}>
+        {applications.length === 0 && <div style={{ textAlign: "center", color: "#666", padding: 40 }}>Заявок пока нет</div>}
+        {applications.map(a => (
+          <div key={a.id} onClick={() => { setActiveApp(a); go("applicationDetail"); }} style={{ ...S.card, cursor: "pointer" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{a.problem}</div>
+                <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{a.expertName} · {a.serviceName}</div>
+                <div style={{ fontSize: 11, color: "#999", marginTop: 4 }}>{a.createdAt}</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <span style={S.tag(statusColor(a.status))}>{a.status}</span>
+                {a.price > 0 && <div style={{ fontSize: 13, fontWeight: "bold", color: C.gold, marginTop: 4 }}>{a.price.toLocaleString()} ₸</div>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <BottomNav screen={screen} go={go} />
+    </div>
+  );
+
+  // ── APPLICATION DETAIL ──
+  if (screen === "applicationDetail" && activeApp) {
+    const app = applications.find(a => a.id === activeApp.id) || activeApp;
+    return (
+      <div style={S.app}>
+        <div style={S.header}>
+          <button onClick={() => go("clientApplications")} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+          <div style={{ textAlign: "center" }}><div style={S.headerTitle}>ЗАЯВКА #{String(app.id).slice(-4)}</div><div style={S.headerSub}>ДЕТАЛИ</div></div>
+          <div style={{ width: 24 }} />
+        </div>
+        <div style={{ padding: 16 }}>
+          <div style={S.card}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <div style={{ fontWeight: "bold", color: C.navy, fontSize: 15 }}>{app.problem}</div>
+              <span style={S.tag(statusColor(app.status))}>{app.status}</span>
+            </div>
+            <div style={{ fontSize: 12, color: "#666" }}>{app.category}</div>
+          </div>
+          {app.aiSummary && (
+            <div style={{ ...S.card, background: `${C.navy}08`, border: `1px solid ${C.navy}20` }}>
+              <div style={{ color: C.gold, fontSize: 11, letterSpacing: 1, marginBottom: 6 }}>AI-РЕЗЮМЕ</div>
+              <div style={{ fontSize: 13, color: C.graphite, lineHeight: 1.6 }}>{app.aiSummary}</div>
+            </div>
+          )}
+          <div style={S.card}>
+            <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>👨‍⚖️ Эксперт: <strong>{app.expertName}</strong></div>
+            <div style={{ fontSize: 12, color: "#666" }}>📋 Услуга: <strong>{app.serviceName}</strong></div>
+            <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>💳 Оплата: <span style={{ color: statusColor(app.paymentStatus) }}>{app.paymentStatus}</span></div>
+          </div>
+          {app.expertAnswer ? (
+            <div style={{ ...S.card, border: `2px solid ${C.green}` }}>
+              <div style={{ color: C.green, fontSize: 11, letterSpacing: 1, marginBottom: 8 }}>✅ ОТВЕТ ЭКСПЕРТА</div>
+              <div style={{ fontSize: 13, color: C.graphite, lineHeight: 1.6 }}>{app.expertAnswer}</div>
+            </div>
+          ) : (
+            <div style={{ ...S.card, background: C.bg }}>
+              <div style={{ fontSize: 13, color: "#999", textAlign: "center" }}>⏳ Эксперт ещё не ответил</div>
+            </div>
+          )}
+          {app.paymentStatus === "Ожидает оплаты" && app.price > 0 && (
+            <button style={S.btnGold} onClick={() => go("payment")}>Оплатить {app.price.toLocaleString()} ₸ →</button>
+          )}
+          {app.expertAnswer && !app.review && (
+            <div style={S.card}>
+              <div style={{ color: C.navy, fontSize: 12, fontWeight: "bold", marginBottom: 8, letterSpacing: 1 }}>⭐ ОСТАВИТЬ ОТЗЫВ</div>
+              <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+                {[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: 24, cursor: "pointer", color: s <= reviewStars ? C.gold : C.silver }} onClick={() => setReviewStars(s)}>★</span>)}
+              </div>
+              <textarea value={reviewText} onChange={e => setReviewText(e.target.value)} style={{ ...S.input, minHeight: 60, resize: "none" }} placeholder="Ваш отзыв..." />
+              <button style={{ ...S.btnGold, marginTop: 8 }} onClick={() => {
+                setApplications(prev => prev.map(a => a.id === app.id ? { ...a, review: { stars: reviewStars, text: reviewText }, status: "Завершена" } : a));
+                go("clientApplications");
+              }}>Отправить отзыв</button>
+            </div>
+          )}
+          {app.review && (
+            <div style={{ ...S.card, background: `${C.gold}10`, border: `1px solid ${C.gold}40` }}>
+              <div style={{ color: C.gold }}>{"★".repeat(app.review.stars)}</div>
+              <div style={{ fontSize: 13, color: C.graphite, marginTop: 4 }}>{app.review.text}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── EXPERT DASHBOARD (delegated to subcomponent) ──
+  if (screen === "expertDashboard") return (
+    <ExpertDashboard applications={applications} setApplications={setApplications} go={go} setRole={setRole} />
+  );
+
+  // ── ADMIN DASHBOARD ──
+  if (screen === "adminDashboard") {
+    const total = applications.length;
+    const newApps = applications.filter(a => a.status === "Новая" || a.status === "Ожидает оплаты").length;
+    const paid = applications.filter(a => a.paymentStatus === "Оплачена").length;
+    const inWork = applications.filter(a => a.status === "В работе").length;
+    const done = applications.filter(a => a.status === "Завершена").length;
+    const totalSum = applications.filter(a => a.paymentStatus === "Оплачена").reduce((s, a) => s + a.price, 0);
+    return (
+      <div style={S.app}>
+        <div style={S.header}>
+          <button onClick={() => { go("roleSelect"); setRole(null); }} style={{ background: "none", border: "none", color: C.gold, fontSize: 20, cursor: "pointer" }}>←</button>
+          <div style={{ textAlign: "center" }}><div style={S.headerTitle}>АДМИНИСТРАТОР</div><div style={S.headerSub}>ADAL JASA GROUP</div></div>
+          <div style={{ width: 24 }} />
+        </div>
+        <div style={{ padding: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+            {[["Всего заявок", total, C.navy], ["Новые", newApps, C.orange], ["Оплачено", paid, C.green], ["В работе", inWork, C.navy2], ["Завершено", done, C.graphite], ["Сумма", totalSum.toLocaleString() + " ₸", C.gold]].map(([l, v, c]) => (
+              <div key={l} style={{ ...S.card, textAlign: "center", padding: 12 }}>
+                <div style={{ fontSize: 22, fontWeight: "bold", color: c }}>{v}</div>
+                <div style={{ fontSize: 11, color: "#666", marginTop: 2 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 13, fontWeight: "bold", color: C.navy, marginBottom: 8, letterSpacing: 1 }}>ВСЕ ЗАЯВКИ</div>
+          {applications.map(a => (
+            <div key={a.id} style={S.card}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                <div style={{ fontWeight: "bold", color: C.navy, fontSize: 13 }}>#{String(a.id).slice(-4)} {a.clientName}</div>
+                <span style={S.tag(statusColor(a.status))}>{a.status}</span>
+              </div>
+              <div style={{ fontSize: 12, color: "#666" }}>{a.problem}</div>
+              <div style={{ fontSize: 12, color: "#666", marginTop: 2 }}>{a.expertName} · {a.price > 0 ? a.price.toLocaleString() + " ₸" : "Бесплатно"}</div>
+              <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+                {["Новая", "В работе", "Ответ готов", "Завершена"].map(st => (
+                  <button key={st} onClick={() => setApplications(prev => prev.map(ap => ap.id === a.id ? { ...ap, status: st } : ap))}
+                    style={{ background: a.status === st ? C.navy : C.bg, color: a.status === st ? C.white : C.navy, border: `1px solid ${C.navy}`, borderRadius: 4, padding: "3px 8px", fontSize: 10, cursor: "pointer" }}>
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div style={{ fontSize: 13, fontWeight: "bold", color: C.navy, marginBottom: 8, marginTop: 8, letterSpacing: 1 }}>ЭКСПЕРТЫ</div>
+          {experts.map(e => (
+            <div key={e.id} style={{ ...S.card, display: "flex", gap: 12, alignItems: "center" }}>
+              <div style={{ fontSize: 24 }}>{e.avatar}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: "bold", color: C.navy, fontSize: 14 }}>{e.name}</div>
+                <div style={{ fontSize: 12, color: "#666" }}>{e.spec}</div>
+                <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+                  <span style={S.tag(C.gold)}>★ {e.rating}</span>
+                  <span style={S.tag(C.navy2)}>{applications.filter(a => a.expertId === e.id).length} заявок</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          <div style={{ textAlign: "center", padding: "16px 0", color: "#999", fontSize: 11 }}>Qoldau by ADAL JASA GROUP</div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+</script>
+</body>
+</html>
